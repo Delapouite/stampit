@@ -59,8 +59,7 @@ var stampit = function stampit(methods, state, enclose) {
 
     factory = function factory(properties) {
       var state = merge({}, fixed.state),
-        instance = mixIn(Object.create(fixed.methods || {}),
-          state, properties),
+        instance = mixIn(Object.create(fixed.methods || {}), state, properties),
         closures = fixed.enclose;
 
       closures.forEach(function (fn) {
@@ -101,8 +100,7 @@ var stampit = function stampit(methods, state, enclose) {
      * @return {Object} stamp  The factory in question (`this`).
      */
     enclose: function stampEnclose() {
-      fixed.enclose = fixed.enclose
-        .concat( extractFunctions.apply(null, arguments) );
+      fixed.enclose = fixed.enclose.concat(extractFunctions.apply(null, arguments));
       return this;
     }
   });
@@ -123,32 +121,27 @@ var compose = function compose() {
   args.forEach(function (source) {
     if (source) {
       if (source.fixed.methods) {
-        obj.fixed.methods = mixInChain({}, obj.fixed.methods,
-          source.fixed.methods);
+        obj.fixed.methods = mixInChain({}, obj.fixed.methods, source.fixed.methods);
       }
 
       if (source.fixed.state) {
-        obj.fixed.state = mixIn({}, obj.fixed.state,
-          source.fixed.state);
+        obj.fixed.state = mixIn({}, obj.fixed.state, source.fixed.state);
       }
 
       if (source.fixed.enclose) {
-        obj.fixed.enclose = obj.fixed.enclose
-          .concat(source.fixed.enclose);
+        obj.fixed.enclose = obj.fixed.enclose.concat(source.fixed.enclose);
       }
     }
   });
 
-  return stampit(obj.fixed.methods, obj.fixed.state,
-    obj.fixed.enclose);
+  return stampit(obj.fixed.methods, obj.fixed.state, obj.fixed.enclose);
 };
 
 /**
  * Take an old-fashioned JS constructor and return a stampit stamp
  * that you can freely compose with other stamps.
- * @param  {Function} Constructor 
- * @return {Function}             A composable stampit factory
- *                                (aka stamp).
+ * @param  {Function} Constructor
+ * @return {Function} A composable stampit factory (aka stamp).
  */
 var convertConstructor = function convertConstructor(Constructor) {
   return stampit().methods(Constructor.prototype).enclose(Constructor);
