@@ -14,15 +14,6 @@ var map = require('mout/array/map');
 var forOwn = require('mout/object/forOwn');
 var mixInChain = require('./mixinchain.js');
 
-var create = function (o) {
-  if (arguments.length > 1) {
-    throw new Error('Object.create implementation only accepts the first parameter.');
-  }
-  function F() {}
-  F.prototype = o;
-  return new F();
-};
-
 var extractFunctions = function extractFunctions(arg) {
   var arr = [],
     args = [].slice.call(arguments);
@@ -70,7 +61,7 @@ var stampit = function stampit(methods, state, enclose) {
 
     factory = function factory(properties) {
       var state = merge({}, fixed.state),
-        instance = mixIn(create(fixed.methods || {}),
+        instance = mixIn(Object.create(fixed.methods || {}),
           state, properties),
         closures = fixed.enclose;
 
