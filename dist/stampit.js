@@ -545,12 +545,6 @@ var create = function (o) {
   return new F();
 };
 
-if(!Array.isArray) {
-  Array.isArray = function (vArg) {
-    return Object.prototype.toString.call(vArg) === "[object Array]";
-  };
-}
-
 var extractFunctions = function extractFunctions(arg) {
   var arr = [],
     args = [].slice.call(arguments);
@@ -567,7 +561,7 @@ var extractFunctions = function extractFunctions(arg) {
         arr.push(fn);
       });
     });
-  } else if ( Array.isArray(arg) ) {
+  } else if (Array.isArray(arg)) {
     forEach(arg, function (fn) {
       arr.push(fn);
     });

@@ -6,6 +6,10 @@ Create objects from reusable, composable behaviors.
 
 Consider this a developer preview. Stampit is in production use right now, but there may be bugs. Please add bug reports and contribute fixes if you are able.
 
+### This Fork (Delapouite / evergreen branch)
+
+It removes <IE9 compatibility shims.
+
 ### Known issues
 
  * `stampit.convertConstructor()` is an experimental feature that doesn't work for constructors that require parameters. If you need to do something that isn't supported, consider using `stampit().enclose()` to turn the constructor into a proper factory, instead.
@@ -285,10 +289,10 @@ Alias for `mixIn`.
 
 ### stampit.convertConstructor() Warning: experimental ###
 
-Take an old-fashioned JS constructor and return a stampit stamp 
+Take an old-fashioned JS constructor and return a stampit stamp
 that you can freely compose with other stamps.
 
- * @param  {Function} Constructor 
+ * @param  {Function} Constructor
  * @return {Function} A composable stampit factory (aka stamp).
 
 ```js
