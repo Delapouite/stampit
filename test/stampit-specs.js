@@ -177,7 +177,7 @@ test('stampit.compose()', function () {
           return secret;
         };
       }), d;
-  
+
   d = stampit.compose(a, b, c).create();
 
   ok(d.methodA && d.stateA && d.getA &&
@@ -235,9 +235,7 @@ test('stampit.convertConstructor()', function () {
 
   equal(u.baz, 'baz',
     'Should be able to add new methods with .compose()');
-
 });
-
 
 test('stampit.compose() with inheritance', function () {
   var c, i, m, n1, N2, sm, sn;

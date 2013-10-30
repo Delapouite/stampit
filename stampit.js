@@ -13,11 +13,11 @@ var forOwn = require('mout/object/forOwn');
 var mixInChain = require('./mixinchain.js');
 
 var extractFunctions = function extractFunctions(arg) {
-  var arr = [],
+  var fns = [],
     args = [].slice.call(arguments);
 
   if (typeof arg === 'function') {
-    args.map(function (fn) {
+    fns = args.map(function (fn) {
       if (typeof fn === 'function') {
         return fn;
       }
@@ -25,15 +25,15 @@ var extractFunctions = function extractFunctions(arg) {
   } else if (typeof arg === 'object') {
     args.forEach(function (obj) {
       forOwn(obj, function (fn) {
-        arr.push(fn);
+        fns.push(fn);
       });
     });
   } else if (Array.isArray(arg)) {
     arg.forEach(function (fn) {
-      arr.push(fn);
+      fns.push(fn);
     });
   }
-  return arr;
+  return fns;
 };
 
 /**
