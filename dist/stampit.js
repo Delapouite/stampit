@@ -19,109 +19,7 @@ module.exports = function mixInChain(target, objects){
     return target;
 };
 
-},{"mout/object/forIn":14}],2:[function(require,module,exports){
-
-
-    /**
-     * Array forEach
-     */
-    function forEach(arr, callback, thisObj) {
-        if (arr == null) {
-            return;
-        }
-        var i = -1,
-            len = arr.length;
-        while (++i < len) {
-            // we iterate over sparse items since there is no way to make it
-            // work properly on IE 7-8. see #64
-            if ( callback.call(thisObj, arr[i], i, arr) === false ) {
-                break;
-            }
-        }
-    }
-
-    module.exports = forEach;
-
-
-
-},{}],3:[function(require,module,exports){
-var forEach = require('./forEach');
-var makeIterator = require('../function/makeIterator_');
-
-    /**
-     * Array map
-     */
-    function map(arr, callback, thisObj) {
-        callback = makeIterator(callback, thisObj);
-        var results = [];
-        if (arr == null){
-            return results;
-        }
-
-        var i = -1, len = arr.length;
-        while (++i < len) {
-            results[i] = callback(arr[i], i, arr);
-        }
-
-        return results;
-    }
-
-     module.exports = map;
-
-
-},{"../function/makeIterator_":4,"./forEach":2}],4:[function(require,module,exports){
-var prop = require('./prop');
-var deepMatches = require('../object/deepMatches');
-
-    /**
-     * Converts argument into a valid iterator.
-     * Used internally on most array/object/collection methods that receives a
-     * callback/iterator providing a shortcut syntax.
-     */
-    function makeIterator(src, thisObj){
-        switch(typeof src) {
-            case 'object':
-                // typeof null == "object"
-                return (src != null)? function(val, key, target){
-                    return deepMatches(val, src);
-                } : src;
-            case 'string':
-            case 'number':
-                return prop(src);
-            case 'function':
-                if (typeof thisObj === 'undefined') {
-                    return src;
-                } else {
-                    return function(val, i, arr){
-                        return src.call(thisObj, val, i, arr);
-                    };
-                }
-            default:
-                return src;
-        }
-    }
-
-    module.exports = makeIterator;
-
-
-
-},{"../object/deepMatches":13,"./prop":5}],5:[function(require,module,exports){
-
-
-    /**
-     * Returns a function that gets a property of the passed object
-     */
-    function prop(name){
-        return function(obj){
-            return obj[name];
-        };
-    }
-
-    module.exports = prop;
-
-
-
-},{}],6:[function(require,module,exports){
+},{"mout/object/forIn":8}],2:[function(require,module,exports){
 var kindOf = require('./kindOf');
 var isPlainObject = require('./isPlainObject');
 var mixIn = require('../object/mixIn');
@@ -172,7 +70,7 @@ var mixIn = require('../object/mixIn');
 
 
 
-},{"../object/mixIn":18,"./isPlainObject":11,"./kindOf":12}],7:[function(require,module,exports){
+},{"../object/mixIn":12,"./isPlainObject":6,"./kindOf":7}],3:[function(require,module,exports){
 var clone = require('./clone');
 var forOwn = require('../object/forOwn');
 var kindOf = require('./kindOf');
@@ -222,17 +120,7 @@ var isPlainObject = require('./isPlainObject');
 
 
 
-},{"../object/forOwn":15,"./clone":6,"./isPlainObject":11,"./kindOf":12}],8:[function(require,module,exports){
-var isKind = require('./isKind');
-    /**
-     */
-    var isArray = Array.isArray || function (val) {
-        return isKind(val, 'Array');
-    };
-    module.exports = isArray;
-
-
-},{"./isKind":9}],9:[function(require,module,exports){
+},{"../object/forOwn":9,"./clone":2,"./isPlainObject":6,"./kindOf":7}],4:[function(require,module,exports){
 var kindOf = require('./kindOf');
     /**
      * Check if value is from a specific "kind".
@@ -243,7 +131,7 @@ var kindOf = require('./kindOf');
     module.exports = isKind;
 
 
-},{"./kindOf":12}],10:[function(require,module,exports){
+},{"./kindOf":7}],5:[function(require,module,exports){
 var isKind = require('./isKind');
     /**
      */
@@ -253,7 +141,7 @@ var isKind = require('./isKind');
     module.exports = isObject;
 
 
-},{"./isKind":9}],11:[function(require,module,exports){
+},{"./isKind":4}],6:[function(require,module,exports){
 
 
     /**
@@ -269,7 +157,7 @@ var isKind = require('./isKind');
 
 
 
-},{}],12:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 
     var _rKind = /^\[object (.*)\]$/,
@@ -291,64 +179,7 @@ var isKind = require('./isKind');
     module.exports = kindOf;
 
 
-},{}],13:[function(require,module,exports){
-var forOwn = require('./forOwn');
-var isArray = require('../lang/isArray');
-
-    function containsMatch(array, pattern) {
-        var i = -1, length = array.length;
-        while (++i < length) {
-            if (deepMatches(array[i], pattern)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    function matchArray(target, pattern) {
-        var i = -1, patternLength = pattern.length;
-        while (++i < patternLength) {
-            if (!containsMatch(target, pattern[i])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    function matchObject(target, pattern) {
-        var result = true;
-        forOwn(pattern, function(val, key) {
-            if (!deepMatches(target[key], val)) {
-                // Return false to break out of forOwn early
-                return (result = false);
-            }
-        });
-
-        return result;
-    }
-
-    /**
-     * Recursively check if the objects match.
-     */
-    function deepMatches(target, pattern){
-        if (target && typeof target === 'object') {
-            if (isArray(target) && isArray(pattern)) {
-                return matchArray(target, pattern);
-            } else {
-                return matchObject(target, pattern);
-            }
-        } else {
-            return target === pattern;
-        }
-    }
-
-    module.exports = deepMatches;
-
-
-
-},{"../lang/isArray":8,"./forOwn":15}],14:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 
     var _hasDontEnumBug,
@@ -412,7 +243,7 @@ var isArray = require('../lang/isArray');
 
 
 
-},{}],15:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var hasOwn = require('./hasOwn');
 var forIn = require('./forIn');
 
@@ -433,7 +264,7 @@ var forIn = require('./forIn');
 
 
 
-},{"./forIn":14,"./hasOwn":16}],16:[function(require,module,exports){
+},{"./forIn":8,"./hasOwn":10}],10:[function(require,module,exports){
 
 
     /**
@@ -447,7 +278,7 @@ var forIn = require('./forIn');
 
 
 
-},{}],17:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var hasOwn = require('./hasOwn');
 var deepClone = require('../lang/deepClone');
 var isObject = require('../lang/isObject');
@@ -489,7 +320,7 @@ var isObject = require('../lang/isObject');
 
 
 
-},{"../lang/deepClone":7,"../lang/isObject":10,"./hasOwn":16}],18:[function(require,module,exports){
+},{"../lang/deepClone":3,"../lang/isObject":5,"./hasOwn":10}],12:[function(require,module,exports){
 var forOwn = require('./forOwn');
 
     /**
@@ -519,7 +350,7 @@ var forOwn = require('./forOwn');
     module.exports = mixIn;
 
 
-},{"./forOwn":15}],19:[function(require,module,exports){
+},{"./forOwn":9}],13:[function(require,module,exports){
 /**
  * Stampit
  **
@@ -529,10 +360,8 @@ var forOwn = require('./forOwn');
  * http://opensource.org/licenses/MIT
  **/
 'use strict';
-var forEach = require('mout/array/forEach');
 var mixIn = require('mout/object/mixIn');
 var merge = require('mout/object/merge');
-var map = require('mout/array/map');
 var forOwn = require('mout/object/forOwn');
 var mixInChain = require('./mixinchain.js');
 
@@ -541,19 +370,19 @@ var extractFunctions = function extractFunctions(arg) {
     args = [].slice.call(arguments);
 
   if (typeof arg === 'function') {
-    arr = map(args, function (fn) {
+    args.map(function (fn) {
       if (typeof fn === 'function') {
         return fn;
       }
     });
   } else if (typeof arg === 'object') {
-    forEach(args, function (obj) {
+    args.forEach(function (obj) {
       forOwn(obj, function (fn) {
         arr.push(fn);
       });
     });
   } else if (Array.isArray(arg)) {
-    forEach(arg, function (fn) {
+    arg.forEach(function (fn) {
       arr.push(fn);
     });
   }
@@ -587,7 +416,7 @@ var stampit = function stampit(methods, state, enclose) {
           state, properties),
         closures = fixed.enclose;
 
-      forEach(closures, function (fn) {
+      closures.forEach(function (fn) {
         if (typeof fn === 'function') {
           instance = fn.call(instance) || instance;
         }
@@ -644,7 +473,7 @@ var compose = function compose() {
   var args = [].slice.call(arguments),
     obj = stampit();
 
-  forEach(args, function (source) {
+  args.forEach(function (source) {
     if (source) {
       if (source.fixed.methods) {
         obj.fixed.methods = mixInChain({}, obj.fixed.methods,
@@ -697,7 +526,7 @@ module.exports = mixIn(stampit, {
   convertConstructor: convertConstructor
 });
 
-},{"./mixinchain.js":1,"mout/array/forEach":2,"mout/array/map":3,"mout/object/forOwn":15,"mout/object/merge":17,"mout/object/mixIn":18}]},{},[19])
-(19)
+},{"./mixinchain.js":1,"mout/object/forOwn":9,"mout/object/merge":11,"mout/object/mixIn":12}]},{},[13])
+(13)
 });
 ;

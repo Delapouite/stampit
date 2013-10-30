@@ -7,10 +7,8 @@
  * http://opensource.org/licenses/MIT
  **/
 'use strict';
-var forEach = require('mout/array/forEach');
 var mixIn = require('mout/object/mixIn');
 var merge = require('mout/object/merge');
-var map = require('mout/array/map');
 var forOwn = require('mout/object/forOwn');
 var mixInChain = require('./mixinchain.js');
 
@@ -19,19 +17,19 @@ var extractFunctions = function extractFunctions(arg) {
     args = [].slice.call(arguments);
 
   if (typeof arg === 'function') {
-    arr = map(args, function (fn) {
+    args.map(function (fn) {
       if (typeof fn === 'function') {
         return fn;
       }
     });
   } else if (typeof arg === 'object') {
-    forEach(args, function (obj) {
+    args.forEach(function (obj) {
       forOwn(obj, function (fn) {
         arr.push(fn);
       });
     });
   } else if (Array.isArray(arg)) {
-    forEach(arg, function (fn) {
+    arg.forEach(function (fn) {
       arr.push(fn);
     });
   }
@@ -65,7 +63,7 @@ var stampit = function stampit(methods, state, enclose) {
           state, properties),
         closures = fixed.enclose;
 
-      forEach(closures, function (fn) {
+      closures.forEach(function (fn) {
         if (typeof fn === 'function') {
           instance = fn.call(instance) || instance;
         }
@@ -122,7 +120,7 @@ var compose = function compose() {
   var args = [].slice.call(arguments),
     obj = stampit();
 
-  forEach(args, function (source) {
+  args.forEach(function (source) {
     if (source) {
       if (source.fixed.methods) {
         obj.fixed.methods = mixInChain({}, obj.fixed.methods,
